@@ -12,6 +12,7 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Петя'},
 ]
+print("Задание 1")
 name_counts = {}
 
 for student in students:
@@ -37,6 +38,7 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Оля'},
 ]
+print("Задание 2")
 name_counts = {}
 most_common_name = None
 max_count = 0
@@ -74,7 +76,13 @@ school_students = [
         {'first_name': 'Саша'},
     ],
 ]
-# ???
+print("Задание 3")
+from collections import Counter
+for i, class_students in enumerate(school_students):
+    names = [student['first_name'] for student in class_students]
+    count = Counter(names)
+    most_common_name = count.most_common(1)[0][0]
+    print(f"Самое частое имя в классе {i+1}: {most_common_name}")
 
 
 # Задание 4
@@ -95,7 +103,19 @@ is_male = {
     'Миша': True,
     'Даша': False,
 }
-# ???
+print("Задание 4")
+for class_info in school:
+    class_name = class_info['class']
+    students = class_info['students']
+    num_girls = 0
+    num_boys = 0
+    for student in students:
+        name = student['first_name']
+        if is_male[name]:
+            num_boys += 1
+        else:
+            num_girls += 1
+    print(f"Класс {class_name}: девочки {num_girls}, мальчики {num_boys}")
 
 
 # Задание 5
@@ -114,5 +134,21 @@ is_male = {
     'Олег': True,
     'Миша': True,
 }
-# ???
+print("Задание 5")
+for class_info in school:
+    class_name = class_info['class']
+    students = class_info['students']
+    num_girls = 0
+    num_boys = 0
+    for student in students:
+        name = student['first_name']
+        if is_male[name]:
+            num_boys += 1
+        else:
+            num_girls += 1
+    if num_boys > num_girls:
+        print(f"Больше всего  в классе {class_name}:  мальчиков {num_boys}")
+    else:
+        print(f"Больше всего  в классе {class_name}:  девочек {num_girls}")
+  
 
