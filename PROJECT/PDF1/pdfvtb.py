@@ -2,21 +2,19 @@ import pandas as pd
 import PyPDF2
 
 
-my_dict = {}
-# Создаем словарь для хранения страниц по ключу value2 
-pages_by_value2 = {} 
+payment_number_to_code = {}
+# Создаем словарь для хранения страниц по ключу kod_SP
+pages_by_kod_SP = {} 
 
 df = pd.read_excel('ВТБ 11.05.23.xlsx', sheet_name='Лист1')
 
 for row in df.itertuples(index=False):
-    key = str(row[0])
-    #value1 = str(row[1]).replace(".", "-")  
-    value1 = "{:.2f}".format(row[1]).replace(".", "-")
-    if value1.endswith("-"):
-        value1 = value1[:-1]
-    #print(value1)
-    value2 = str(row[2]).zfill(4)
-    my_dict[key] = [value1, value2]
+    payment_number = str(row[0])
+    summa_of_payment = "{:.2f}".format(row[1]).replace(".", "-")
+    if summa_of_payment.endswith("-"):
+        summa_of_payment = value1[:-1]
+    kod_SP = str(row[2]).zfill(4)
+    payment_number_to_code[payment_number] = [summa_of_payment, kod_SP]
 
 
 # Открываем PDF файл и создаем объект PdfFileReader
@@ -26,34 +24,38 @@ pdf_reader = PyPDF2.PdfReader(pdf_file)
 # Получаем количество страниц в PDF файле
 num_pages = len(pdf_reader.pages)
 print(num_pages)
-# Проходим по каждой странице и получаем ее содержимое
 
+# Проходим по каждой странице и получаем ее содержимое
 for page_num in range(num_pages):
     page = pdf_reader.pages[page_num]
     page_content = page.extract_text()
     
     # Сравниваем содержимое страницы с данными из словаря
-    for key, values in my_dict.items():
-
-        #if key in page_content and values[0] in page_content: #and values[1] in page_content:
-        if key in page_content and (values[0]  or values[0].replace("-", " -") in page_content):
+    for payment_number, values in payment_number_to_code.items():
+        
+        search_platezhka = "ПЛАТЕЖНОЕ ПОРУЧЕНИЕ № " + payment_number
+        search_order = "БАНКОВСКИЙ ОРДЕР № " +  payment_number
+        #search_obyavlenie = "ОБЪЯВЛЕНИЕ N " + payment_number
+        #print(search_platezhka)
+    
+        if search_platezhka or search_order in page_content and (values[0]  or values[0].replace("-", " -") in page_content):
             # Найден нужный лист 
-            value2 = values[1] 
-            if value2 not in pages_by_value2: 
-                print(value2)
-                # Создаем новый PDF-файл для этого ключа value2 
-                pages_by_value2[value2] = PyPDF2.PdfWriter() 
+            kod_SP = values[1] 
+            if kod_SP not in pages_by_kod_SP: 
+                print(kod_SP)
+                
+                # Создаем новый PDF-файл для этого ключа kod_SP
+                pages_by_kod_SP[kod_SP] = PyPDF2.PdfWriter() 
                 # Добавляем страницу в PDF-файл 
-            pages_by_value2[value2].add_page(page) 
-            #print(len(pages_by_value2))
+            pages_by_kod_SP[kod_SP].add_page(page) 
             break 
         
 
 # Закрываем PDF файл
 pdf_file.close()
-# Сохраняем каждый PDF-файл по ключу value2 
-for value2, pdf_writer in pages_by_value2.items(): 
-    with open(f"{value2}.pdf", "wb") as output_pdf: 
+# Сохраняем каждый PDF-файл по ключу kod_SP 
+for kod_SP, pdf_writer in pages_by_kod_SP.items(): 
+    with open(f"{kod_SP}.pdf", "wb") as output_pdf: 
         pdf_writer.write(output_pdf)
 
  
