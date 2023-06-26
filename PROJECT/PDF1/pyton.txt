@@ -1,0 +1,127 @@
+auto-py-to-exe
+расположение скрипта: C:\Users\DoKyMeHTbl\PycharmProjects\pythonProject
+
+**************************************************************
+компиляция сложным путем:
+pip install pyinstaller
+cd c:\Users\DoKyMeHTbl\PycharmProjects\pythonProject
+pyinstaller --onefile pdfsplitter.py 
+*******************************************************************
+********************************************************************
+df = pd.read_csv(filename, encoding = 'unicode_escape', delimiter=';',  names=['date', 'number', 'Количество', 'БЕ'], header=1)
+pivot_tble=(pd.pivot_table(df, index=df.iloc[:,3], values=['Количество'], aggfunc='count', margins=True).astype(int))
+*********************************************************************************************
+import pandas as pd
+# системный плагин для установления путей
+import os
+# плагин диалогового окна
+from tkinter import messagebox as msgbox
+from tkinter.filedialog import askopenfilename
+
+
+# объявляем каталог для файла с промежуточными итогами
+itogi = os.path.abspath(os.curdir) + "/" + "Итоги.csv"
+itogi = itogi.replace("/", "\\")
+# Открываем xls файл
+msgbox.showwarning("XLS", "Выберите  ЕКСЕЛЬ файл для промежуточных итогов")
+ekc_file = askopenfilename()
+
+# Если был выбран не xls, то перезапрашиваем
+while str(ekc_file[-4:]) != ".xls":
+    msgbox.showerror("Ошибка выбора ЕКСЕЛЬ", "Выбран не XLS формата\nВыберите XLS файл")
+    ekc_file = askopenfilename()
+
+df = pd.read_excel(ekc_file)
+
+
+pivot_tble=(pd.pivot_table(df, index=df.iloc[:,3], aggfunc='count', margins=True).astype(int))
+#print(pivot_tble)
+#pivot_tble.to_csv('D:\Desktop\itogi.csv',  sep=';')
+pivot_tble.to_csv(itogi,  sep=';')
+
+********************************************************************
+********************************************************************
+import pandas as pd
+
+
+# объявляем каталог для файла с промежуточными итогами
+itogi = os.path.abspath(os.curdir) + "/" + "Итоги.csv"
+itogi = itogi.replace("/", "\\")
+
+# Открываем xls файл
+msgbox.showwarning("XLS", "Выберите  ЕКСЕЛЬ файл для промежуточных итогов")
+ekc_file = askopenfilename()
+
+# Если был выбран не xls, то перезапрашиваем
+while str(ekc_file[-4:]) != ".xls":
+    msgbox.showerror("Ошибка выбора ЕКСЕЛЬ", "Выбран не XLS формата\nВыберите XLS файл")
+    ekc_file = askopenfilename()
+
+df = pd.read_excel(ekc_file)
+pivot_tble=(pd.pivot_table(df, index=df.iloc[:,3], values=['Sum'],  aggfunc='count', margins=True).astype(int))
+#print(pivot_tble)
+
+pivot_tble.to_csv(itogi,  sep=';')
+************************************************************************
+Пример:
+import pandas as pd   # pip install pandas | conda install pandas
+filename = "/Downloads/TestData.xlsx"
+# читаем/парсим Excel файл в Pandas.DataFrame
+df = pd.read_excel(filename)
+# df.iloc[:, 2] - выбираем третий столбец по индексу (индексация начинается с нуля)
+# функция `pd.to_numeric(column, errors="coerce")` пытается преобразовать все значения столбца в числа,
+# если это невозможно заменяет значения на `NaN` (Not a Number)
+res = pd.to_numeric(df.iloc[:, 2], errors="coerce").sum()
+print(f"Сумма значений столбца 2 (нумерация начинается с нуля): {res}")
+
+ПРИмЕР:
+import pandas as pd
+
+filename = "D:\Desktop\цзвт.xls"
+#df = pd.read_csv(filename, sep=',')
+
+df = pd.read_excel(filename)
+
+pivot_tble=(pd.pivot_table(df, index=df.iloc[:,3], values=['Sum'],  aggfunc='count', margins=True).astype(int))
+print(pivot_tble)
+
+pivot_tble.to_csv('D:\Desktop\itogi.csv',  sep=';')
+
+************************************************************************
+C:\Users\DoKyMeHTbl\PycharmProjects\pythonProject\pdfsplitter.py
+
+name = int(input("Введите название: 1 - приход, 2 - расход   "))
+if name == 1:
+    name = "приход"
+elif name == 2:
+    name = "пп"
+
+
+ fname = "/PDF_NEW/" + "БЕ " + str(platezh_BE) + "/"
+            k_name = os.path.abspath(os.curdir) + "/PDF_NEW/" + platezh_date_full + "/БЕ " + str(platezh_BE) + "/"
+            f_name = str(year) + r"." + str(month) + "." + str(day) + "_" + str(i)
+            test = str(i+1).rjust(5, "0")
+            f_split_name = test + " - П_п №" + str(platezh_nomer) + " на сумму " + str(platezh_summa_full) + " руб. от " + str(platezh_date_full)
+            if not os.path.exists(k_name): os.makedirs(k_name)
+************************************************************************
+import pandas as pd
+import numpy as np
+# pip install pandas | conda install pandas
+filename = "D:/Desktop/Цзвт.xls"
+# читаем/парсим Excel файл в Pandas.DataFrame
+df = pd.read_excel(filename)
+# df.iloc[:, 2] - выбираем третий столбец по индексу (индексация начинается с нуля)
+# функция `pd.to_numeric(column, errors="coerce")` пытается преобразовать все значения столбца в числа,
+# если это невозможно заменяет значения на `NaN` (Not a Number)
+res = pd.to_numeric(df.iloc[:, 2], errors="coerce").sum()
+print(f"Сумма значений столбца 2 (нумерация начинается с нуля): {res}")
+a = len (df.iloc[:,0])
+
+pd.options.display.float_format ='{:,.0f}'.format
+#pivot_tble=pd.pivot_table(df, index=['BE'], values=['SUM'], aggfunc='sum')
+
+#df['Be'] = df['Be'].astype(int)
+#pivot_tble=pd.pivot_table(df, index=df.iloc[:,3],  aggfunc='size')
+pivot_tble=pd.pivot_table(df, index=df.iloc[:,3], values=['Sum'],  aggfunc='count', margins=True)
+
+print(pivot_tble)
