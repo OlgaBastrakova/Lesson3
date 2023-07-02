@@ -8,14 +8,9 @@ from tkinter.filedialog import askopenfilename
 from tkinter import simpledialog
 import tkinter as tk
 import PySimpleGUI as sg
-from pdfminer.high_level import extract_text 
 
-path_katalog = os.path.abspath(os.curdir) + "/PDF_NEW/"
-path_katalog = path_katalog.replace("/","\\")
-root = tk.Tk()
-root.withdraw()
 
-def remove_directory(path):
+def remove_directory(path_katalog):
     try:
         shutil.rmtree(path_katalog)
         time.sleep(2)
@@ -25,7 +20,7 @@ def remove_directory(path):
             exit()
 
 def get_file_path(message):
-    msgbox.showwarning("XLSX", message)
+    msgbox.showwarning("Выберите файл", message)
     file_path = askopenfilename()
     return file_path
 
@@ -54,28 +49,20 @@ def process_data_frame(df):
         payment_number_to_code[payment_number] = [summa_of_payment, kod_SP]
     return payment_number_to_code, date_of_file 
 
-def read_pdf_file(pdf_file_name):
-    # Открываем PDF файл и создаем объект PdfFileReader
-    with open(pdf_file_name, 'rb') as pdf_file:
-        pdf_reader = PyPDF2.PdfReader(pdf_file)
-        num_pages = len(pdf_reader.pages)
-        print(f"Количество страниц в PDF-файле: {num_pages}")
-    return pdf_reader, num_pages
-
             
 def main():
+    path_katalog = os.path.abspath(os.curdir) + "/PDF_NEW/"
+    path_katalog = path_katalog.replace("/","\\")
+    root = tk.Tk()
+    root.withdraw()
     remove_directory(path_katalog)
     user_input = 'пп'
     xls_file = get_file_path("Выберите подготовленный XLSx файл")
     pdf_file_name = get_file_path("Выберите многостроничный PDF файл")
     df = read_excel_data(xls_file, sheet_name='Лист1')
-    create_pivot_table(xls_file)
+    create_pivot_table(xls_file) 
     payment_number_to_code_result, date_of_file_result = process_data_frame(df)
     pages_by_kod_SP = {} 
-
-    # Открываем PDF файл и создаем объект PdfFileReader
-    #pdf_reader, num_pages = read_pdf_file(pdf_file_name) 
-
 
     # Открываем PDF файл и создаем объект PdfFileReader
 
@@ -88,12 +75,7 @@ def main():
         for page_num in range(num_pages):  
             page = pdf_reader.pages[page_num]
             page_content = page.extract_text()
-            #print(page_content)
-            #page = read_pdf_file(pdf_file_name)[0].pages[page_num-1]
-            #page_content = page.extract_text()
-            #page_content = image_to_string(convert_from_path(pdf_file_name, first_page=page_num, last_page=page_num)[0])
-
-        
+                
             # Сравниваем содержимое страницы с данными из словаря
             for payment_number, values in payment_number_to_code_result.items():
                 search_platezhka = "ПЛАТЕЖНОЕ ПОРУЧЕНИЕ № " + payment_number
