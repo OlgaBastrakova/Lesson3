@@ -82,12 +82,13 @@ class PDFExtractor:
         return text
 
     def find_payment_number(self, text):
-        pattern = r'ПЛАТЕЖНОЕ ПОРУЧЕНИЕ № (\d+)'
-        match = re.search(pattern, text)
-        if match:
-            return match.group(1)
-        else:
-            return None 
+        patterns = [r'ПЛАТЕЖНОЕ ПОРУЧЕНИЕ № (\d+)', r'БАНКОВСКИЙ ОРДЕР № (\d+)'] 
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(1)
+        return None 
+
   
     def split_pdf_by_payment_number(self, payment_number_to_code_result, path_katalog, date_of_file_result):
         with open(self.file_path, 'rb') as pdf_file:
