@@ -39,6 +39,7 @@ class ExcelProcessor:
     def __init__(self, xls_file, sheet_name='Лист1'):
         self.xls_file = xls_file
         self.sheet_name = sheet_name
+        self.payment_number_to_code, self.date_of_file = self.process_data_frame()
 
     def read_excel_data(self): 
         df = pd.read_excel(self.xls_file, sheet_name=self.sheet_name) 
@@ -89,6 +90,8 @@ class PDFExtractor:
                 return match.group(1)
         return None 
 
+    def is_payment_number_in_dict(self, payment_number, payment_number_to_code_result):
+        return payment_number in payment_number_to_code_result
   
     def split_pdf_by_payment_number(self, payment_number_to_code_result, path_katalog, date_of_file_result):
         with open(self.file_path, 'rb') as pdf_file:
@@ -101,10 +104,8 @@ class PDFExtractor:
                 text = page_obj.extract_text()
                 payment_number = self.find_payment_number(text)
                 print(payment_number)
-                #print(payment_number_to_code_result)
-                if payment_number and payment_number in payment_number_to_code_result:
+                if self.is_payment_number_in_dict(payment_number, payment_number_to_code_result):
                     summa_of_payment, kod_SP = payment_number_to_code_result[payment_number]
-                    #print(payment_number_to_code_result)
                     if kod_SP not in pages_by_kod_SP:
                         # Create a new PDF file for this kod_SP key
                         pages_by_kod_SP[kod_SP] = PyPDF2.PdfWriter()
@@ -133,7 +134,9 @@ def main():
     pdf_file_name = manager.get_file_path("Выберите многостроничный PDF файл")
 
     processor = ExcelProcessor(xls_file)
-    payment_number_to_code_result, date_of_file_result = processor.process_data_frame()
+    #payment_number_to_code_result, date_of_file_result = processor.process_data_frame()
+    payment_number_to_code_result = processor.payment_number_to_code
+    date_of_file_result = processor.date_of_file
     processor.create_pivot_table()
 
 
